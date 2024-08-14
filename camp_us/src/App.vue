@@ -1,30 +1,55 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="all">
+    <div class="header">
+      <Header></Header>
+    </div>
+    <div class="main">
+      <p>main</p>
+    </div>
+    <div class="footer">
+      <Footer></Footer>
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
+<script setup>
+import Header from "../src/components/Header.vue";
+import Footer from "../src/components/Footer.vue";
+import { RouterLink, RouterView, useRouter } from 'vue-router';
+
+</script>
+
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+  .all {
+    display:grid;
+    grid-template-columns: 1fr; /* 열을 하나만 사용 */
+    grid-template-rows: auto 1fr auto; /* 헤더와 푸터는 자동 크기, 중간은 최대 크기 */
+    height: 100vh; /* 화면 전체 높이 */
+  }
+
+  .header {
+  grid-row-start: 1;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.main {
+  grid-row-start: 2;
+  overflow: auto; /* 내용이 많아지면 스크롤 가능하게 */
+  display: grid;
+  grid-template-columns: 100px auto 100px;
+}
+
+.main p {
+  grid-column-start: 2;
+}
+
+.footer {
+  grid-row-start: 3;
 }
 </style>
