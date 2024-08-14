@@ -4,7 +4,9 @@
       <Header></Header>
     </div>
     <div class="main">
-      <p>main</p>
+      <div class="content">
+        <RouterView></RouterView>
+      </div>
     </div>
     <div class="footer">
       <Footer></Footer>
@@ -40,12 +42,11 @@ body {
 
 .main {
   grid-row-start: 2;
-  overflow: auto; /* 내용이 많아지면 스크롤 가능하게 */
   display: grid;
   grid-template-columns: 100px auto 100px;
 }
 
-.main p {
+.content{
   grid-column-start: 2;
 }
 
