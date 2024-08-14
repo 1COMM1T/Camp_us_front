@@ -10,20 +10,40 @@
             <span>예약 조회</span>
         </div>
         <div class="login">
-            <p>login</p>
+            <button @click="handleAuthAction">{{ isLoggedIn ? 'Logout' : 'Login' }}</button>
         </div>
     </div>
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const token = ref(localStorage.getItem('token') || '');
+
+const isLoggedIn = computed(() => !!token.value);
 
 const navigateTo = (path) => {
     router.push(path);
 };
 
+const handleAuthAction = () => {
+    if (isLoggedIn.value) {
+        // 로그아웃 로직
+        localStorage.removeItem('token');
+        token.value = '';
+        alert('로그아웃 성공!');
+        router.push('/');
+    } else {
+        // 로그인 페이지로 이동
+        navigateTo('/login');
+    }
+};
+
+onMounted(() => {
+    token.value = localStorage.getItem('token') || '';
+});
 </script>
 
 <style scoped>
@@ -63,10 +83,17 @@ const navigateTo = (path) => {
     justify-self: center;
 }
 
-.login p {
-    margin: 0;
-    
+.login button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-
+.login button:hover {
+    background-color: #0056b3;
+}
 </style>
