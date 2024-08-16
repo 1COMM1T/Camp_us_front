@@ -13,7 +13,12 @@
                 </div>
                 <button type="submit">로그인</button>
             </form>
-            <p class="signup-link">계정이 없으신가요? <a @click="navigateToSignup">회원가입</a></p>
+            <div class="additional-options">
+                <p class="signup-link">계정이 없으신가요? <a @click="navigateToSignup">회원가입</a></p>
+                <div id="kakao-login-btn" @click="loginWithKakao">
+                    <img src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg" width="100" alt="카카오 로그인 버튼" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -49,8 +54,10 @@ const handleLogin = async() => {
         alert('잘못된 로그인 정보입니다!');
         window.location.reload();
     }
-    
-    
+};
+
+const loginWithKakao = () => {
+    window.location.href = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=74c81051576be2126396ca67ae865bbf&redirect_uri=http://localhost:8080/login/oauth2/code/kakao';
 };
 
 const navigateToSignup = () => {
@@ -83,8 +90,8 @@ h2 {
 .input-group {
     margin-bottom: 15px;
     text-align: left;
-    width: 100%; /* 그룹의 너비를 form 안으로 제한 */
-    box-sizing: border-box; /* 패딩 포함 */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .input-group label {
@@ -94,11 +101,11 @@ h2 {
 }
 
 .input-group input {
-    width: 100%; /* 입력 필드가 부모 요소의 너비에 맞도록 조정 */
+    width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    box-sizing: border-box; /* 패딩 포함 */
+    box-sizing: border-box;
 }
 
 button {
@@ -117,9 +124,18 @@ button:hover {
     background-color: #0056b3;
 }
 
+.additional-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
 .signup-link {
-    margin-top: 15px;
+    margin: 0;
     color: #555;
+    text-align: left;
+    flex: 1; /* Flexbox에서 공간을 차지하도록 설정 */
 }
 
 .signup-link a {
@@ -130,5 +146,10 @@ button:hover {
 
 .signup-link a:hover {
     text-decoration: underline;
+}
+
+#kakao-login-btn {
+    text-align: right;
+    flex-shrink: 0; /* 이미지 크기를 유지하도록 설정 */
 }
 </style>
