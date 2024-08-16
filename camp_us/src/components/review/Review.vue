@@ -1,6 +1,9 @@
 <template>
     <div>
       <h1>캠핑장 리뷰</h1>
+      <div class="button-container">
+        <button>리뷰 작성</button>
+      </div>
       <div v-if="reviews.length">
         <div v-for="(review, index) in reviews" :key="index" class="review">
           <h3>Rating: {{ review.rating }} / 5</h3>
@@ -53,5 +56,24 @@
     max-width: 100%;
     height: auto;
     margin-top: 10px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
   }
   </style>
