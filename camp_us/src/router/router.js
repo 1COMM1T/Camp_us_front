@@ -16,6 +16,10 @@ const routes = [
   {
     path: '/signup',
     component: () => import('../views/SignupView.vue')
+  },
+  {
+    path: '/bookmarks',
+    component: () => import('../views/BookmarkView.vue')
   }
 ]
 
