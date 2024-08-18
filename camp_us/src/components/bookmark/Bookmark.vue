@@ -14,7 +14,6 @@
           />
           <div class="wishlist-info">
             <h3>{{ camping.campName }}</h3>
-            <p>{{ camping.lineIntro }}</p>
           </div>
           <button @click="removeFromWishlist(camping.campId)">찜 목록에서 제거</button>
         </div>
