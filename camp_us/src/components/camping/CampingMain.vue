@@ -4,7 +4,12 @@
             <h1>캠핑장 리스트</h1>
         </div>
         <div class="campingCardContainer">
-            <div class="campingCard" v-for="(camping, index) in campingList" :key="index">
+            <div 
+                class="campingCard" 
+                v-for="(camping, index) in campingList" 
+                :key="index"
+                @click="goToDetail(camping.campId)"
+            >
                 <div class="campingImageContainer">
                     <img :src="camping.firstImageUrl ? camping.firstImageUrl : defaultImage" alt="Camping Image" class="campingImage"/>
                 </div>
@@ -15,7 +20,7 @@
                 <button 
                     v-if="isLoggedIn" 
                     :class="{'wishlist-button': true, 'wishlist-button-remove': wishlist.has(camping.campId)}" 
-                    @click="toggleWishlist(camping.campId)">
+                    @click.stop="toggleWishlist(camping.campId)">
                     {{ wishlist.has(camping.campId) ? '찜 취소' : '찜하기' }}
                 </button>
             </div>
@@ -31,6 +36,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router'; // vue-router import
 import defaultImage from '@/assets/imageX.jpg';
 
 const currentPage = ref(0);
@@ -38,6 +44,7 @@ const totalPages = ref(0);
 const campingList = ref([]);
 const wishlist = ref(new Set()); // 찜 목록을 저장할 Set
 const isLoggedIn = ref(false); 
+const router = useRouter(); // router 사용을 위한 인스턴스 생성
 
 const checkLoginStatus = () => {
     const token = localStorage.getItem('token');
@@ -110,6 +117,11 @@ const toggleWishlist = async (campingId) => {
     }
 };
 
+// 캠핑장 상세 페이지로 이동하는 메서드
+const goToDetail = (campId) => {
+    router.push(`/campingDetail/${campId}`);
+};
+
 const goToNextPage = () => {
     currentPage.value++;
     getCampingList();
@@ -153,6 +165,12 @@ onMounted(() => {
     flex-direction: column;
     justify-content: space-between;
     position: relative;
+    cursor: pointer;
+}
+
+.campingCard:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s;
 }
 
 .campingImage {
@@ -210,4 +228,4 @@ onMounted(() => {
     background-color: #cccccc;
     cursor: not-allowed;
 }
-</style
+</style>

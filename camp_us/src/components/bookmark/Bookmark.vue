@@ -6,6 +6,7 @@
           class="wishlist-card"
           v-for="(camping, index) in wishlist"
           :key="index"
+          @click="goToDetail(camping.campId)"
         >
           <img
             :src="camping.firstImageUrl ? camping.firstImageUrl : fallbackImage"
@@ -15,7 +16,7 @@
           <div class="wishlist-info">
             <h3>{{ camping.campName }}</h3>
           </div>
-          <button @click="removeFromWishlist(camping.campId)">찜 목록에서 제거</button>
+          <button @click.stop="removeFromWishlist(camping.campId)">찜 목록에서 제거</button>
         </div>
       </div>
     </div>
@@ -24,16 +25,18 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
-  import fallbackImage from '@/assets/imageX.jpg';  // 이미지 경로를 미리 import
+  import { useRouter } from 'vue-router'; // router 객체 사용을 위해 추가
+  import fallbackImage from '@/assets/imageX.jpg';
   
   const wishlist = ref([]);
+  const router = useRouter(); // router 인스턴스 생성
   
   const getWishlist = async () => {
     try {
-      const token = localStorage.getItem('token'); // 토큰 가져오기
+      const token = localStorage.getItem('token');
       const response = await axios.get('/api/v1/bookmarks', {
         headers: {
-          Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 포함
+          Authorization: `Bearer ${token}`,
         },
       });
       wishlist.value = response.data;
@@ -43,29 +46,30 @@
   };
   
   const removeFromWishlist = async (campingId) => {
-  try {
-    const confirmed = window.confirm('찜 목록에서 이 캠핑장을 제거하시겠습니까?');
-    if (confirmed) {
-      const token = localStorage.getItem('token'); // 토큰 가져오기
-      console.log(campingId)
-      await axios.delete('/api/v1/bookmarks', {
-        headers: {
-          Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 포함
-        },
-        params: {
-          campId: campingId,  // 쿼리 파라미터로 campId 전달
-        }
-      });
-      wishlist.value = wishlist.value.filter((item) => item.id !== campingId);
-      alert('찜 목록에서 제거되었습니다.');
-      window.location.reload();
+    try {
+      const confirmed = window.confirm('찜 목록에서 이 캠핑장을 제거하시겠습니까?');
+      if (confirmed) {
+        const token = localStorage.getItem('token');
+        await axios.delete('/api/v1/bookmarks', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            campId: campingId,
+          }
+        });
+        wishlist.value = wishlist.value.filter((item) => item.campId !== campingId);
+        alert('찜 목록에서 제거되었습니다.');
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error removing from wishlist:', error);
     }
-  } catch (error) {
-    console.error('Error removing from wishlist:', error);
-  }
-};
-
-
+  };
+  
+  const goToDetail = (campId) => {
+    router.push(`/campingDetail/${campId}`);
+  };
   
   onMounted(() => {
     getWishlist();
@@ -92,6 +96,12 @@
     width: 300px;
     text-align: center;
     position: relative;
+    cursor: pointer;
+    transition: transform 0.3s; /* 카드에 애니메이션 추가 */
+  }
+  
+  .wishlist-card:hover {
+    transform: scale(1.05); /* 카드 확대 효과 */
   }
   
   .wishlist-image {
