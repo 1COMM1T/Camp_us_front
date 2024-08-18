@@ -20,6 +20,10 @@ const routes = [
   {
     path: '/bookmarks',
     component: () => import('../views/BookmarkView.vue')
+  },
+  {
+    path: '/campingDetail/:campId',
+    component: () => import('../views/CampingDetailView.vue')
   }
 ]
 
