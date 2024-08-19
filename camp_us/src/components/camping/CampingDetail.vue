@@ -8,7 +8,7 @@
         <div class="camping-summary">
           <p class="line-intro">{{ campingDetail.lineIntro }}</p>
           <p class="feature-summary">{{ campingDetail.featureSummary }}</p>
-          <p><strong>📍 주소:</strong> {{ campingDetail.addr }}</p>
+          <p><strong>📍 주소:</strong> {{ campingDetail.doName + " " + campingDetail.sigunguName }}</p>
           <p><strong>📞 전화번호:</strong> {{ campingDetail.tel }}</p>
           <p><strong>🌐 홈페이지:</strong> <a :href="campingDetail.homepage" target="_blank">{{ campingDetail.homepage }}</a></p>
           <p><strong>🏕️ 글램핑 사이트 수:</strong> {{ campingDetail.glampingSiteCnt }}</p>
