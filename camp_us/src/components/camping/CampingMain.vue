@@ -4,7 +4,12 @@
             <h1>캠핑장 리스트</h1>
         </div>
         <div class="campingCardContainer">
-            <div class="campingCard" v-for="(camping, index) in campingList" :key="index">
+            <div 
+                class="campingCard" 
+                v-for="(camping, index) in campingList" 
+                :key="index"
+                @click="goToDetail(camping.campId)"
+            >
                 <div class="campingImageContainer">
                     <img :src="camping.firstImageUrl ? camping.firstImageUrl : defaultImage" alt="Camping Image" class="campingImage"/>
                 </div>
@@ -12,6 +17,12 @@
                     <h2>{{ camping.campName }}</h2>
                     <p>{{ camping.lineIntro }}</p>
                 </div>
+                <button 
+                    v-if="isLoggedIn" 
+                    :class="{'wishlist-button': true, 'wishlist-button-remove': wishlist.has(camping.campId)}" 
+                    @click.stop="toggleWishlist(camping.campId)">
+                    {{ wishlist.has(camping.campId) ? '찜 취소' : '찜하기' }}
+                </button>
             </div>
         </div>
         <div class="pagination">
@@ -25,41 +36,106 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router'; // vue-router import
 import defaultImage from '@/assets/imageX.jpg';
 
 const currentPage = ref(0);
 const totalPages = ref(0);
 const campingList = ref([]);
+const wishlist = ref(new Set()); // 찜 목록을 저장할 Set
+const isLoggedIn = ref(false); 
+const router = useRouter(); // router 사용을 위한 인스턴스 생성
+
+const checkLoginStatus = () => {
+    const token = localStorage.getItem('token');
+    isLoggedIn.value = !!token; // 토큰이 있으면 true, 없으면 false
+};
 
 const getCampingList = async () => {
     try {
         const response = await axios.get('/api/v1/campings', {
             params: {
-                page: currentPage.value, // API 요청 시 페이지 번호는 1부터 시작하게 전송
+                page: currentPage.value,
                 size: 12
             }
         });
-        campingList.value = response.data; 
+        campingList.value = response.data;
+        if (isLoggedIn.value) {
+            checkWishlist(); // 로그인된 경우에만 찜 상태 확인
+        }
     } catch(error) {
         console.error("Error:", error);
     }
 };
 
+const checkWishlist = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/api/v1/bookmarks', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        const wishlistItems = response.data;
+        wishlist.value = new Set(wishlistItems.map(item => item.campId)); // 찜 목록을 Set으로 저장
+    } catch (error) {
+        console.error('Error fetching wishlist:', error);
+    }
+};
+
+const toggleWishlist = async (campingId) => {
+    try {
+        const token = localStorage.getItem('token');
+        if (wishlist.value.has(campingId)) {
+            const confirmed = window.confirm('찜을 취소하시겠습니까?');
+            if (confirmed) {
+                await axios.delete(`/api/v1/bookmarks`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: {
+                        campId: campingId // RequestParam으로 campId 전달
+                    }
+                });
+                wishlist.value.delete(campingId);
+            }
+        } else {
+            const confirmed = window.confirm('찜 목록에 추가하시겠습니까?');
+            if (confirmed) {
+                await axios.post(`/api/v1/bookmarks`, { campId: campingId }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                wishlist.value.add(campingId);
+                alert('찜 목록에 추가되었습니다.');
+                window.location.reload();
+            }
+        }
+    } catch (error) {
+        console.error('Error toggling wishlist:', error);
+    }
+};
+
+// 캠핑장 상세 페이지로 이동하는 메서드
+const goToDetail = (campId) => {
+    router.push(`/campingDetail/${campId}`);
+};
+
 const goToNextPage = () => {
-        currentPage.value++;
-        getCampingList(); // 페이지 변경 후 다시 데이터 로드
+    currentPage.value++;
+    getCampingList();
 };
 
 const goToPreviousPage = () => {
     if (currentPage.value > 0) {
         currentPage.value--;
-        getCampingList(); // 페이지 변경 후 다시 데이터 로드
+        getCampingList();
     }
 };
 
-
 onMounted(() => {
+    checkLoginStatus(); // 컴포넌트 마운트 시 로그인 상태 확인
     getCampingList();
 });
 </script>
@@ -85,6 +161,16 @@ onMounted(() => {
     overflow: hidden;
     width: 300px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    cursor: pointer;
+}
+
+.campingCard:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s;
 }
 
 .campingImage {
@@ -95,6 +181,31 @@ onMounted(() => {
 
 .campingInfo {
     padding: 20px;
+    flex-grow: 1;
+}
+
+.wishlist-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 0 0 10px 10px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: auto;
+}
+
+.wishlist-button-remove {
+    background-color: #ff4d4d;
+}
+
+.wishlist-button:hover {
+    background-color: #0056b3;
+}
+
+.wishlist-button-remove:hover {
+    background-color: #ff1a1a;
 }
 
 .pagination {
