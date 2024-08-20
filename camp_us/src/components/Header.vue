@@ -6,7 +6,7 @@
         <div class="menu">
             <span @click="navigateTo('/campingMain')">캠핑장 조회</span>
             <span  @click="navigateTo('/bookmarks')">찜 목록 조회</span>
-            <span>리뷰 조회</span>
+            <span @click="navigateTo('/campingReview')">리뷰 조회</span>
             <span>예약 조회</span>
         </div>
         <div class="login">

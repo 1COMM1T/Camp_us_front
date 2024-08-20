@@ -24,6 +24,15 @@ const routes = [
   {
     path: '/campingDetail/:campId',
     component: () => import('../views/CampingDetailView.vue')
+  },
+  {
+    path: '/campingReview',
+    component: () => import('../views/CampingReviewView.vue')
+  },
+  {
+    path: '/review',
+    name: 'Review',
+    component: () => import('../views/ReviewView.vue')
   }
 ]
 
