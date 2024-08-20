@@ -219,13 +219,47 @@ onMounted(() => {
     margin: 0 10px;
     border: none;
     border-radius: 5px;
+  }
+  
+  .review-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
     background-color: #007BFF;
     color: white;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-}
-
-.pagination button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-</style>
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .review-form {
+    margin-bottom: 20px;
+  }
+  
+  .review-form textarea, 
+  .review-form input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .review-form textarea {
+    resize: vertical;
+  }
+  </style>
