@@ -33,6 +33,10 @@ const routes = [
     path: '/review',
     name: 'Review',
     component: () => import('../views/ReviewView.vue')
+  },
+  {
+    path: '/reservation',
+    component: () => import('../views/ReservationView.vue')
   }
 ]
 
