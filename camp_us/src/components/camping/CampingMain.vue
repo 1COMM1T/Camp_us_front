@@ -15,6 +15,9 @@
                 </div>
                 <div class="campingInfo">
                     <h2>{{ camping.campName }}</h2>
+                    <span class="rating">
+                        <i v-for="star in 5" :key="star" class="star" :class="{'filled': star <= camping.rating}">&#9733;</i>
+                    </span>
                     <p>{{ camping.lineIntro }}</p>
                 </div>
                 <button 
@@ -51,6 +54,24 @@ const checkLoginStatus = () => {
     isLoggedIn.value = !!token; // 토큰이 있으면 true, 없으면 false
 };
 
+const getAverageRatingForCamping = async (campId) => {
+    try {
+        const response = await axios.get('/api/v1/reviews', {
+            params: { campId }
+        });
+        const reviews = response.data.content;
+        
+        if (reviews.length === 0) return 0;
+
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+        return totalRating / reviews.length;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        return 0;
+    }
+};
+
+
 const getCampingList = async () => {
     try {
         const response = await axios.get('/api/v1/campings', {
@@ -59,7 +80,17 @@ const getCampingList = async () => {
                 size: 12
             }
         });
-        campingList.value = response.data;
+
+        const campings = response.data;
+
+        // 각 캠핑장에 대한 별점 계산
+        for (const camping of campings) {
+            camping.rating = await getAverageRatingForCamping(camping.campId);
+        }
+        
+        campingList.value = campings;
+
+        
         if (isLoggedIn.value) {
             checkWishlist(); // 로그인된 경우에만 찜 상태 확인
         }
@@ -262,4 +293,18 @@ onMounted(() => {
   .review-form textarea {
     resize: vertical;
   }
+
+  .rating {
+    margin-left: 10px;
+}
+
+.star {
+    color: #ccc;
+    font-size: 16px;
+}
+
+.star.filled {
+    color: #FFD700; /* 금색 */
+}
+
   </style>
