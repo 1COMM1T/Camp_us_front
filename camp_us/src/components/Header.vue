@@ -5,7 +5,7 @@
         </div>
         <div class="menu">
             <span @click="navigateTo('/campingMain')">캠핑장 조회</span>
-            <span  @click="navigateTo('/bookmarks')">찜 목록 조회</span>
+            <span @click="handleBookmarkClick">찜 목록 조회</span>
             <span @click="navigateTo('/campingReview')">리뷰 조회</span>
             <span>예약 조회</span>
         </div>
@@ -38,6 +38,15 @@ const handleAuthAction = () => {
     } else {
         // 로그인 페이지로 이동
         navigateTo('/login');
+    }
+};
+
+const handleBookmarkClick = () => {
+    if (!isLoggedIn.value) {
+        alert('로그인 이후 사용 가능합니다.');
+        navigateTo('/login');
+    } else {
+        navigateTo('/bookmarks');
     }
 };
 
