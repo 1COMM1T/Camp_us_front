@@ -15,6 +15,9 @@
           />
           <div class="wishlist-info">
             <h3>{{ camping.campName }}</h3>
+            <span class="rating">
+                <i v-for="star in 5" :key="star" class="star" :class="{'filled': star <= camping.rating}">&#9733;</i>
+            </span>
           </div>
           <button @click.stop="removeFromWishlist(camping.campId)">찜 목록에서 제거</button>
         </div>
@@ -39,11 +42,36 @@
           Authorization: `Bearer ${token}`,
         },
       });
-      wishlist.value = response.data;
+
+      const bookmarks = response.data;
+
+      for (const bookmark of bookmarks) {
+        bookmark.rating = await getAverageRatingForCamping(bookmark.campId);
+      }
+
+      wishlist.value = bookmarks;
+
     } catch (error) {
       console.error('Error fetching wishlist:', error);
     }
   };
+
+  const getAverageRatingForCamping = async (campId) => {
+    try {
+        const response = await axios.get('/api/v1/reviews', {
+            params: { campId }
+        });
+        const reviews = response.data.content;
+        
+        if (reviews.length === 0) return 0;
+
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+        return totalRating / reviews.length;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+        return 0;
+    }
+};
   
   const removeFromWishlist = async (campingId) => {
     try {
@@ -128,5 +156,18 @@
   button:hover {
     background-color: #ff3333;
   }
+
+  .rating {
+    margin-left: 10px;
+}
+
+.star {
+    color: #ccc;
+    font-size: 16px;
+}
+
+.star.filled {
+    color: #FFD700; /* 금색 */
+}
   </style>
   
