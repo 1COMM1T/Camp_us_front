@@ -14,9 +14,6 @@
         <div v-for="(review, index) in reviews" :key="index" class="review">
           <h3>Rating: {{ review.rating }} / 5</h3>
           <p>{{ review.reviewContent }}</p>
-          <div v-if="review.reviewImageUrl">
-            <img :src="review.reviewImageUrl" alt="Review Image" class="review-image" />
-          </div>
         </div>
       </div>
       <div v-else>
