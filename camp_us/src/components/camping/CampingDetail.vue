@@ -32,6 +32,21 @@
           </li>
         </ul>
       </div>
+
+      <h2>리뷰</h2>
+      <div v-if="reviews.length">
+        <div v-for="(review, index) in reviews" :key="index" class="review">
+          <h3>Rating: {{ review.rating }} / 5</h3>
+          <p>{{ review.reviewContent }}</p>
+          <div v-if="review.reviewImageUrl">
+            <img :src="review.reviewImageUrl" alt="Review Image" class="review-image" />
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <p>리뷰가 없습니다.</p>
+      </div>
+    
     </div>
   </template>
   
@@ -40,7 +55,7 @@
   import axios from 'axios';
   import { useRoute } from 'vue-router';
   import defaultImage from '@/assets/imageX.jpg';
-  
+
   const route = useRoute();
   const campingDetail = ref({});
   
@@ -55,9 +70,29 @@
   };
   
   onMounted(() => {
-    console.log(route);
-    getCampingDetail();
-  });
+  getCampingDetail();
+  getReviews();  // 컴포넌트가 마운트될 때 리뷰를 가져옴
+});
+
+  const reviews = ref([]);
+  const showReviewForm = ref(false);
+  
+  const getReviews = async () => {
+  const campId = route.params.campId;  // campId를 params에서 가져옴
+  try {
+    const response = await axios.get('/api/v1/reviews', {
+      params: { campId }
+    });
+    reviews.value = response.data.content;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+  
+  const toggleReviewForm = () => {
+    showReviewForm.value = !showReviewForm.value;
+  };
+
   </script>
   
   <style scoped>
@@ -156,6 +191,26 @@
     margin-bottom: 15px;
     font-weight: bold;
     color: #2980b9;
+  }
+
+  .review {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: #ffffff; /* 배경색을 하얀색으로 설정 */
+}
+  
+  .review-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
   }
   </style>
   
