@@ -32,20 +32,19 @@
           </li>
         </ul>
       </div>
-
-      <h2>리뷰</h2>
-      <div v-if="reviews.length">
-        <div v-for="(review, index) in reviews" :key="index" class="review">
-          <h3>Rating: {{ review.rating }} / 5</h3>
-          <p>{{ review.reviewContent }}</p>
-          <div v-if="review.reviewImageUrl">
-            <img :src="review.reviewImageUrl" alt="Review Image" class="review-image" />
-          </div>
+      <div class="camping-review">
+        <h2>리뷰</h2>
+        <div v-if="reviews.length">
+            <div v-for="(review, index) in reviews" :key="index" class="review">
+            <h3>Rating: {{ review.rating }} / 5</h3>
+            <p>{{ review.reviewContent }}</p>
+            </div>
+        </div>
+        <div v-else>
+            <p>리뷰가 없습니다.</p>
         </div>
       </div>
-      <div v-else>
-        <p>리뷰가 없습니다.</p>
-      </div>
+      
     
     </div>
   </template>
@@ -63,7 +62,6 @@
     try {
       const response = await axios.get(`/api/v1/campings/${route.params.campId}`);
       campingDetail.value = response.data;
-      console.log(campingDetail.value)
     } catch (error) {
       console.error('Error fetching camping details:', error);
     }
@@ -194,17 +192,17 @@
   }
 
   .review {
-    border: 1px solid #ccc;
-    padding: 10px;
     margin: 10px 0;
-    border-radius: 5px;
-    background-color: #ffffff; /* 배경색을 하얀색으로 설정 */
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-  
-  .review-image {
-    max-width: 100%;
-    height: auto;
-    margin-top: 10px;
+
+  .camping-review h2{
+    font-size: 1.5em;
+    color: #34495e;
+    margin-bottom: 15px;
   }
   
   .button-container {
